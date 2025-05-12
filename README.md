@@ -1,6 +1,6 @@
 # Contribution-Graph
-A silly python script that print out a contribution graph in your terminal 
-place the script in a master folder, It traverses recursively and pools all the data from child directories.
+- A silly python script that print out a contribution graph in your terminal 
+- place the script in a master folder, It traverses recursively and pools all the data from child directories.
 ```
 pythhon3 Contribution-graph.py
 ```
