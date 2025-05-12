@@ -4,4 +4,4 @@
 ```
 pythhon3 Contribution-graph.py
 ```
-![image](https://github.com/user-attachments/assets/0083df7a-08d1-4a61-a210-ad7c4071121a)
+![image](https://github.com/user-attachments/assets/442e090c-f93a-4c43-97c7-77c204108dce)
