@@ -8,7 +8,7 @@ import calendar
 init()
 
 COLORS = [
-    "#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"
+    "#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"
 ]
 DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
@@ -37,7 +37,7 @@ def gather_commit_dates(repo_path):
         return []
 
 # Step 1: Find repos and collect all commit dates
-master_dir = os.getcwd()  # Change to desired path or pass as arg
+master_dir = os.getcwd()
 all_dates = []
 
 for repo in find_git_repos(master_dir):
@@ -45,11 +45,12 @@ for repo in find_git_repos(master_dir):
 
 commit_counts = Counter(all_dates)
 
-# Step 2: Build contribution grid (same as before)
+# Step 2: Build contribution grid
 today = datetime.today()
 start = today - timedelta(weeks=53)
 weeks = [[] for _ in range(53)]
 date_labels = []
+used_months = set()
 
 for i in range(7 * 53):
     date = start + timedelta(days=i)
@@ -69,14 +70,15 @@ for i in range(7 * 53):
     block = rgb_escape(COLORS[level])
     week_index = (date - start).days // 7
     while len(weeks[week_index]) < 7:
-        weeks[week_index].append("  ")
+        weeks[week_index].append(rgb_escape(COLORS[0]))
     weeks[week_index][date.weekday()] = block
 
-    if date.day == 1:
+    if date.day == 1 and date.month not in used_months:
         date_labels.append((week_index, calendar.month_abbr[date.month]))
+        used_months.add(date.month)
 
 # Step 3: Print calendar with labels and legend
-month_line = "    "
+month_line = "     "
 last_pos = -1
 for pos, name in date_labels:
     if pos - last_pos > 1:
@@ -86,13 +88,14 @@ for pos, name in date_labels:
 print("\nGitHub-style contribution graph (from multiple local repos)\n")
 print(month_line)
 
-for day_index, day_name in enumerate(DAYS):
-    row = f"{day_name} "
+for i in range(7):
+    label = DAYS[i] if DAYS[i] in ["Mon", "Wed", "Fri"] else "   "
+    row = f"{label} "
     for week in weeks:
-        row += week[day_index]
+        row += week[i]
     print(row)
 
-legend = "Legend: Less "
+legend = "    Less "
 for color in COLORS[1:]:
     legend += rgb_escape(color)
 legend += " More"
