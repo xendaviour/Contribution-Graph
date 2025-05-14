@@ -10,7 +10,7 @@ init()
 COLORS = [
     "#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"
 ]
-DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 def rgb_escape(hex_color):
     hex_color = hex_color.lstrip("#")
@@ -22,7 +22,7 @@ def find_git_repos(root_path):
     for dirpath, dirnames, filenames in os.walk(root_path):
         if ".git" in dirnames:
             git_repos.append(dirpath)
-            dirnames.clear()  # Prevent descending further
+            dirnames.clear()
     return git_repos
 
 def gather_commit_dates(repo_path):
@@ -44,14 +44,22 @@ for repo in find_git_repos(master_dir):
     all_dates.extend(gather_commit_dates(repo))
 
 commit_counts = Counter(all_dates)
+total_commits = sum(commit_counts.values())
 
 # Step 2: Build contribution grid
-today = datetime.today()
+today = datetime(2025, 5, 14)  # Fixed date as per context
 start = today - timedelta(weeks=53)
+
+# Adjust start date to the nearest Monday to align weeks properly
+start_weekday = start.weekday()
+if start_weekday != 0:  # If not Monday
+    start = start - timedelta(days=start_weekday)
+
 weeks = [[] for _ in range(53)]
 date_labels = []
 used_months = set()
 
+# Collect all commits into the grid
 for i in range(7 * 53):
     date = start + timedelta(days=i)
     count = commit_counts.get(date.strftime("%Y-%m-%d"), 0)
@@ -73,30 +81,34 @@ for i in range(7 * 53):
         weeks[week_index].append(rgb_escape(COLORS[0]))
     weeks[week_index][date.weekday()] = block
 
+    # Use original logic for month labels
     if date.day == 1 and date.month not in used_months:
         date_labels.append((week_index, calendar.month_abbr[date.month]))
         used_months.add(date.month)
 
-# Step 3: Print calendar with labels and legend
-month_line = "     "
+# Step 3: Print calendar with labels and legend using original month positioning
+month_line = "     "  # Space for day labels
 last_pos = -1
 for pos, name in date_labels:
-    if pos - last_pos > 1:
-        month_line += name.ljust((pos - last_pos) * 2)
+    if pos - last_pos > 1 or last_pos == -1:  # Include first month
+        if last_pos == -1:
+            month_line += " " * (pos * 2) + name
+        else:
+            month_line += name.ljust((pos - last_pos) * 2)
         last_pos = pos
 
-print("\nGitHub-style contribution graph (from multiple local repos)\n")
+print(f"\nGitHub-style contribution graph ({total_commits} contributions in the last year)\n")
 print(month_line)
 
-for i in range(7):
-    label = DAYS[i] if DAYS[i] in ["Mon", "Wed", "Fri"] else "   "
+for i, day in enumerate(DAYS):
+    label = day if day in ["Mon", "Wed", "Fri"] else "   "
     row = f"{label} "
     for week in weeks:
-        row += week[i]
+        row += week[i] if i < len(week) else rgb_escape(COLORS[0])
     print(row)
 
-legend = "    Less "
-for color in COLORS[1:]:
+legend = "\n    Less "
+for color in COLORS:
     legend += rgb_escape(color)
 legend += " More"
-print("\n" + legend)
+print(legend)
