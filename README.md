@@ -37,7 +37,7 @@ python3 Contribution-graph.py
 - Render a beautiful wall of green boxes.
 - Remind you you're doing great (probably).
   
-![image](https://github.com/user-attachments/assets/442e090c-f93a-4c43-97c7-77c204108dce) 
+![image](https://github.com/user-attachments/assets/b543eb3a-49f9-481f-8745-6fbb6076b8b1)
 
 ## Bonus
 - No network calls. No tracking. No cookies.
