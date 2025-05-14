@@ -28,6 +28,7 @@ Drop the script into a directory filled with Git repos (or just your life's work
 Then run:
 
 ```bash
+pip install colorama==0.4.6
 python3 Contribution-graph.py
 ```
 ## It will:
